@@ -1,18 +1,19 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import BackIcon from '../../components/ui/backIcon';
+import CustomInput from '../../components/ui/customInput';
+import PrimaryButton from '../../components/ui/primaryButton';
+import SocialButton from '../../components/ui/socialButton';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [secureTextEntry, setSecureTextEntry] = useState(true);
-  const insets = useSafeAreaInsets();
   const router = useRouter();
 
   const handleLogin = () => {
-    // MOCK LOGIN: In a real app, you would validate credentials with an API here
-    router.replace('/home');
+    // MOCK LOGIN
+    router.replace('/(tabs)');
   };
 
   return (
@@ -22,8 +23,8 @@ export default function LoginScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton}>
-            <Text style={styles.backIcon}>‹</Text>
+          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+            <BackIcon width={28} height={28} />
           </TouchableOpacity>
         </View>
 
@@ -35,53 +36,37 @@ export default function LoginScreen() {
         </View>
 
         <View style={styles.formContainer}>
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="masukan email disini"
-              placeholderTextColor="#999"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-          </View>
+          <CustomInput
+            label="Email Address"
+            placeholder="example@gmail.com"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Kata Sandi</Text>
-            <View style={styles.passwordContainer}>
-              <TextInput
-                style={styles.passwordInput}
-                placeholder="masukan kata sandi disini"
-                placeholderTextColor="#999"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={secureTextEntry}
-              />
-              <TouchableOpacity onPress={() => setSecureTextEntry(!secureTextEntry)}>
-                <Text style={styles.eyeIcon}>{secureTextEntry ? '👁️' : '👁️‍🗨️'}</Text>
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity style={styles.forgotPassword}>
-              <Text style={styles.forgotPasswordText}>Lupa Sandi</Text>
-            </TouchableOpacity>
-          </View>
+          <CustomInput
+            label="Password"
+            placeholder="********"
+            value={password}
+            onChangeText={setPassword}
+            isPassword
+          />
+
+          <TouchableOpacity style={styles.forgotPassword} onPress={() => router.push('/auth/forgot-password')}>
+            <Text style={styles.forgotPasswordText}>Lupa Sandi</Text>
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.bottomContainer}>
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.loginButtonText}>Masuk</Text>
-          </TouchableOpacity>
+        <View style={styles.spacer} />
 
-          <TouchableOpacity style={styles.googleButton}>
-            <Text style={styles.googleIcon}>G</Text>
-            <Text style={styles.googleButtonText}>Masuk Dengan Google</Text>
-          </TouchableOpacity>
+        <View style={styles.bottomContainer}>
+          <PrimaryButton title="Masuk" onPress={handleLogin} />
+          <SocialButton title="Masuk Dengan Google" />
 
           <View style={styles.registerContainer}>
             <Text style={styles.registerText}>Pengguna baru? </Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/auth/register')}>
               <Text style={styles.registerLink}>Buat akun</Text>
             </TouchableOpacity>
           </View>
@@ -109,12 +94,6 @@ const styles = StyleSheet.create({
     padding: 10,
     marginLeft: -10,
   },
-  backIcon: {
-    fontSize: 32,
-    fontWeight: '300',
-    color: '#000',
-    lineHeight: 32,
-  },
   titleContainer: {
     alignItems: 'center',
     marginBottom: 40,
@@ -127,104 +106,39 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: '#666',
+    color: '#999',
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 22,
   },
   formContainer: {
-    marginBottom: 40,
-  },
-  inputGroup: {
     marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 10,
-    padding: 15,
-    fontSize: 14,
-    color: '#333',
-  },
-  passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-  },
-  passwordInput: {
-    flex: 1,
-    paddingVertical: 15,
-    fontSize: 14,
-    color: '#333',
-  },
-  eyeIcon: {
-    fontSize: 16,
-    color: '#999',
   },
   forgotPassword: {
     alignSelf: 'flex-end',
-    marginTop: 8,
+    marginTop: -10,
   },
   forgotPasswordText: {
-    fontSize: 12,
     color: '#999',
+    fontSize: 12,
+  },
+  spacer: {
+    flex: 1,
   },
   bottomContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    paddingBottom: 40,
-  },
-  loginButton: {
-    backgroundColor: '#A54165',
-    paddingVertical: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  loginButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  googleButton: {
-    flexDirection: 'row',
-    backgroundColor: '#FAFAFA',
-    borderWidth: 1,
-    borderColor: '#EAEAEA',
-    paddingVertical: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 30,
-  },
-  googleIcon: {
-    fontSize: 18,
-    marginRight: 10,
-    color: '#4285F4',
-    fontWeight: 'bold',
-  },
-  googleButtonText: {
-    color: '#333',
-    fontSize: 14,
-    fontWeight: '600',
+    paddingBottom: 30,
   },
   registerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    marginTop: 10,
   },
   registerText: {
-    color: '#666',
     fontSize: 14,
+    color: '#999',
   },
   registerLink: {
-    color: '#333',
     fontSize: 14,
+    color: '#333',
     fontWeight: 'bold',
   },
 });
